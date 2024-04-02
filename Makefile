@@ -1,5 +1,5 @@
 
-TAG ?= $$(git describe --tags)
+TAG ?= $$(git rev-parse HEAD)
 
 build:
 	@env GOMODULE111=on find ./cmd/* -maxdepth 1 -type d -exec go build "{}" \;
@@ -13,10 +13,11 @@ test:
 	@go test -v ./...
 
 docker-build:
-	@docker build -t kevholditch/pagerduty-slack-sync:${TAG} -f build/package/Dockerfile .
+	@docker build -t harbor.core.skyd.io/skydio-internal/cloud/infrastructure/pagerduty-slack-sync:${TAG} -f build/package/Dockerfile .
 
 docker-publish:
-	@docker login
+	@docker login harbor.core.skyd.io
+	@docker push harbor.core.skyd.io/skydio-internal/cloud/infrastructure/pagerduty-slack-sync:${TAG}
 
 ci: build check test
 

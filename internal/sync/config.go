@@ -21,6 +21,7 @@ const (
 // PagerDutyToken - token used to connect to pagerduty API
 // SlackToken - token used to connect to Slack API
 type Config struct {
+	SyncAllSchedules           bool
 	Schedules                  []Schedule
 	PagerDutyToken             string
 	SlackToken                 string
@@ -38,12 +39,10 @@ type Schedule struct {
 	CurrentOnCallGroupName string
 }
 
-// NewConfigFromEnv is a function to generate a config from env varibles
+// NewStaticConfigFromEnv is a function to generate a only static config from env varibles
 // PAGERDUTY_TOKEN - PagerDuty Token
 // SLACK_TOKEN - Slack Token
-// SCHEDULE_XXX="id,name" e.g. 1234,platform-engineer will generate a schedule with the following values
-// ScheduleID = "1234", AllOnCallGroupName = "all-oncall-platform-engineers", CurrentOnCallGroupName: "current-oncall-platform-engineer"
-func NewConfigFromEnv() (*Config, error) {
+func NewStaticConfigFromEnv() (*Config, error) {
 	config := &Config{
 		PagerDutyToken:       os.Getenv(pagerDutyTokenKey),
 		SlackToken:           os.Getenv(slackTokenKey),
@@ -61,6 +60,20 @@ func NewConfigFromEnv() (*Config, error) {
 		return nil, err
 	}
 	config.PagerdutyScheduleLookahead = pagerdutyScheduleLookahead
+
+	return config, nil
+}
+
+// NewConfigFromEnv is a function to generate a config from env varibles
+// PAGERDUTY_TOKEN - PagerDuty Token
+// SLACK_TOKEN - Slack Token
+// SCHEDULE_XXX="id,name" e.g. 1234,platform-engineer will generate a schedule with the following values
+// ScheduleID = "1234", AllOnCallGroupName = "all-oncall-platform-engineers", CurrentOnCallGroupName: "current-oncall-platform-engineer"
+func NewConfigFromEnv() (*Config, error) {
+	config, err := NewStaticConfigFromEnv()
+	if err != nil {
+		return nil, err
+	}
 
 	for _, key := range os.Environ() {
 		if strings.HasPrefix(key, scheduleKeyPrefix) {
@@ -128,4 +141,15 @@ func getPagerdutyScheduleLookahead() (time.Duration, error) {
 	}
 
 	return v, nil
+}
+
+func (c *Config) populateSchedulesFromPagerduty(p *pagerDutyClient) error {
+	pdSchedules, err := p.getAllSchedules()
+	if err != nil {
+		return err
+	}
+	for _, pds := range pdSchedules {
+		c.Schedules = appendSchedule(c.Schedules, pds.ID, pds.Name)
+	}
+	return nil
 }

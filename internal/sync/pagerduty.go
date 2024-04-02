@@ -31,3 +31,20 @@ func (p *pagerDutyClient) getEmailsForSchedule(ID string, lookahead time.Duratio
 	}
 	return results, nil
 }
+
+func (p *pagerDutyClient) getAllSchedules() ([]pagerduty.Schedule, error) {
+	var schedules []pagerduty.Schedule
+	opt := pagerduty.ListSchedulesOptions{}
+	for {
+		resp, err := p.client.ListSchedules(opt)
+		if err != nil {
+			return nil, err
+		}
+		schedules = append(schedules, resp.Schedules...)
+		if !resp.More {
+			break
+		}
+		opt.Offset = resp.Offset
+	}
+	return schedules, nil
+}

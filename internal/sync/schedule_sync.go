@@ -57,6 +57,12 @@ func Schedules(config *Config) error {
 		return emails, nil
 	}
 
+	if config.SyncAllSchedules {
+		if err := config.populateSchedulesFromPagerduty(p); err != nil {
+			return err
+		}
+	}
+
 	for _, schedule := range config.Schedules {
 		logrus.Infof("checking slack group: %s", schedule.CurrentOnCallGroupName)
 

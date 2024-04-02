@@ -49,9 +49,12 @@ Full parameter list:
 | PAGERDUTY_TOKEN              | Token used to talk to the PagerDuty API                                           | n/a            | xxxxx                   |
 | SLACK_TOKEN                  | Token used to talk to Slack API                                                   | n/a            | xoxp-xxxxxx             |
 | SCHEDULE_<NAME>              | A PagerDuty schedule that you want to sync                                        | n/a            | 1234,platform-engineer  |
+| SYNC_ALL_SCHEDULES           | Set to `true` to sync all schedules *See note below                               | false          | true                    |
 | RUN_INTERVAL_SECONDS         | Run a sync every X seconds                                                        | 60             | 300                     |
 | PAGERDUTY_SCHEDULE_LOOKAHEAD | How far into the future to evaluate Pagerduty schedules (Go time duration format) | 2400h          | 8760h                   |
 
+
+**NOTE**: If `SYNC_ALL_SCHEDULES` is set to `true` then the app will sync all schedules that the PagerDuty API returns.  This is useful if you have a large number of schedules and you don't want to have to define them all as environment variables. This will assume that each schedule name is the team name. I.e. a schedule named `infrastructure` will be used to create the slack groups `all-oncall-infrastructures` and `current-oncall-infrastructure`.
 
 ## Slack permissions
 

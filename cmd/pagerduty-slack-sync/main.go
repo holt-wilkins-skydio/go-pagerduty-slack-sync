@@ -16,14 +16,27 @@ func main() {
 	stop := make(chan os.Signal, 1) // Buffer size of 1
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
 
-	config, err := sync.NewConfigFromEnv()
-	if err != nil {
-		logrus.Errorf("could not parse config, error: %v", err)
-		os.Exit(-1)
-		return
-	}
+	var config *sync.Config
+	var err error
 
-	logrus.Infof("starting, going to sync %d schedules", len(config.Schedules))
+	if os.Getenv("SYNC_ALL_SCHEDULES") == "true" {
+		if config, err = sync.NewStaticConfigFromEnv(); err != nil {
+			logrus.Errorf("could not parse config, error: %v", err)
+			os.Exit(-1)
+			return
+		}
+		config.SyncAllSchedules = true
+
+		logrus.Infof("starting, going to sync all schedules")
+	} else {
+		if config, err = sync.NewConfigFromEnv(); err != nil {
+			logrus.Errorf("could not parse config, error: %v", err)
+			os.Exit(-1)
+			return
+		}
+
+		logrus.Infof("starting, going to sync %d schedules", len(config.Schedules))
+	}
 
 	timer := time.NewTicker(time.Second * time.Duration(config.RunIntervalInSeconds))
 
