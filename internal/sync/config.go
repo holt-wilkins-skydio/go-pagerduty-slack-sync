@@ -9,6 +9,7 @@ import (
 )
 
 const (
+	SyncAllSchedKey        = "SYNC_ALL_SCHEDULES"
 	scheduleKeyPrefix      = "SCHEDULE_"
 	pagerDutyTokenKey      = "PAGERDUTY_TOKEN"
 	slackTokenKey          = "SLACK_TOKEN"
