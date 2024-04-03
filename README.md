@@ -3,6 +3,14 @@
 </p>
 
 
+# Skydio-specific fork of PagerDuty-Slack-Sync
+
+To publish a new version of this tool, run `make test`, then `make docker-build` and finally `make docker-publish`.
+Take the hash from the output of the `make docker-build` command and put that into `services/observability/slack-pagerduty-oncall/BUILD.bazel` in skyops, then run `bazel query 'kind(.*gitops, //services/observability/slack-pagerduty-oncall/...)' | xargs -n1 -P8 bazel run`.
+
+This is a fork of the PagerDuty-Slack-Sync tool that has been modified to work with Skydio's PagerDuty and Slack configurations.
+The original README is below.
+
 
 This tool syncs one or more pagerduty schedules to two slack groups per schedule.  The first slack group is a group with everyone who is in the pagerduty schedule and the second contains the current person on call.
 
