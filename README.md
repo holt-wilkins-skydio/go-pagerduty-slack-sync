@@ -5,7 +5,7 @@
 
 # Skydio-specific fork of PagerDuty-Slack-Sync
 
-To publish a new version of this tool, run `make test`, then `make docker-build` and finally `make docker-publish`.
+To publish a new version of this tool, run `make test`, then `make docker-build` and finally `make docker-publish` (this must be run in a Linux X86 machine, i.e. a desktop or coder).
 Take the hash from the output of the `make docker-build` command and put that into `services/observability/slack-pagerduty-oncall/BUILD.bazel` in skyops, then run `bazel query 'kind(.*gitops, //services/observability/slack-pagerduty-oncall/...)' | xargs -n1 -P8 bazel run`.
 
 This is a fork of the PagerDuty-Slack-Sync tool that has been modified to work with Skydio's PagerDuty and Slack configurations.
@@ -31,9 +31,9 @@ docker run -e RUN_INTERVAL_SECONDS=60 -e SLACK_TOKEN=xxx -e PAGERDUTY_TOKEN=xxx 
 
 The following slack groups would be created:
 
-- `@all-oncall-platform-engineers` => `user1, user2, user3` 
+- `@all-oncall-platform-engineers` => `user1, user2, user3`
 - `@current-oncall-platform-engineer` => `user3`
-    
+
 Multiple schedules can be synced at once by passing many env variables beginning with `SCHEDULE_`.  The format for the value that the schedule parameter expects is `<pagerduty schedule id>/<group-name>`.  The `<group name>` will be used to build the two names for the slack groups using the following format:
     - `all-oncall-<group-name>s`
     - `current-oncall-<group-name>`
