@@ -11,6 +11,7 @@ import (
 const (
 	SyncAllSchedKey        = "SYNC_ALL_SCHEDULES"
 	scheduleKeyPrefix      = "SCHEDULE_"
+	noopKey                = "NOOP"
 	pagerDutyTokenKey      = "PAGERDUTY_TOKEN"
 	slackTokenKey          = "SLACK_TOKEN"
 	runInterval            = "RUN_INTERVAL_SECONDS"
@@ -28,6 +29,7 @@ type Config struct {
 	SlackToken                 string
 	RunIntervalInSeconds       int
 	PagerdutyScheduleLookahead time.Duration
+	Noop                       bool
 }
 
 // Schedule models a PagerDuty schedule that will be synced with Slack
@@ -47,6 +49,7 @@ func NewStaticConfigFromEnv() (*Config, error) {
 	config := &Config{
 		PagerDutyToken:       os.Getenv(pagerDutyTokenKey),
 		SlackToken:           os.Getenv(slackTokenKey),
+		Noop:                 strings.ToLower(os.Getenv(noopKey)) == "true",
 		RunIntervalInSeconds: runIntervalDefault,
 	}
 

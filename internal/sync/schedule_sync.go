@@ -34,9 +34,13 @@ func Schedules(config *Config) error {
 
 		if !compare.Array(slackIDs, members) {
 			logrus.Infof("member list %s needs updating...", groupName)
-			_, err = s.Client.UpdateUserGroupMembers(userGroup.ID, strings.Join(slackIDs, ","))
-			if err != nil {
-				return err
+			if config.Noop {
+				logrus.Infof("noop enabled, would have updated %s with %v", userGroup.ID, slackIDs)
+			} else {
+				_, err = s.Client.UpdateUserGroupMembers(userGroup.ID, strings.Join(slackIDs, ","))
+				if err != nil {
+					return err
+				}
 			}
 		}
 		return nil
