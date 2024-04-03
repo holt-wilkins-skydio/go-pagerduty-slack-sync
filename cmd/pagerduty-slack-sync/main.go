@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -19,7 +20,7 @@ func main() {
 	var config *sync.Config
 	var err error
 
-	if os.Getenv("SYNC_ALL_SCHEDULES") == "true" {
+	if strings.ToLower(os.Getenv("SYNC_ALL_SCHEDULES")) == "true" {
 		if config, err = sync.NewStaticConfigFromEnv(); err != nil {
 			logrus.Errorf("could not parse config, error: %v", err)
 			os.Exit(-1)
