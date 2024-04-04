@@ -11,6 +11,7 @@ import (
 const (
 	SyncAllSchedKey        = "SYNC_ALL_SCHEDULES"
 	scheduleKeyPrefix      = "SCHEDULE_"
+	skipMissingGroupsKey   = "SKIP_MISSING_SLACK_GROUPS"
 	noopKey                = "NOOP"
 	pagerDutyTokenKey      = "PAGERDUTY_TOKEN"
 	slackTokenKey          = "SLACK_TOKEN"
@@ -24,6 +25,7 @@ const (
 // SlackToken - token used to connect to Slack API
 type Config struct {
 	SyncAllSchedules           bool
+	SkipMissingGroups          bool
 	Schedules                  []Schedule
 	PagerDutyToken             string
 	SlackToken                 string
@@ -49,6 +51,7 @@ func NewStaticConfigFromEnv() (*Config, error) {
 	config := &Config{
 		PagerDutyToken:       os.Getenv(pagerDutyTokenKey),
 		SlackToken:           os.Getenv(slackTokenKey),
+		SkipMissingGroups:    strings.ToLower(os.Getenv(skipMissingGroupsKey)) == "true",
 		Noop:                 strings.ToLower(os.Getenv(noopKey)) == "true",
 		RunIntervalInSeconds: runIntervalDefault,
 	}

@@ -23,10 +23,16 @@ func Schedules(config *Config) error {
 			return err
 		}
 
-		userGroup, err := s.createOrGetUserGroup(groupName)
+		userGroup, err := s.createOrGetUserGroup(groupName, config.SkipMissingGroups)
 		if err != nil {
 			return err
 		}
+		if userGroup == nil {
+			// We should only get here if SkipMissingGroups is true
+			logrus.Infof("skipping %s as it does not exist in Slack", groupName)
+			return nil
+		}
+
 		members, err := s.Client.GetUserGroupMembers(userGroup.ID)
 		if err != nil {
 			return err
@@ -35,7 +41,7 @@ func Schedules(config *Config) error {
 		if !compare.Array(slackIDs, members) {
 			logrus.Infof("member list %s needs updating...", groupName)
 			if config.Noop {
-				logrus.Infof("noop enabled, would have updated %s with %v", userGroup.ID, slackIDs)
+				logrus.Infof("noop enabled, would have updated %s with %v", groupName, slackIDs)
 			} else {
 				_, err = s.Client.UpdateUserGroupMembers(userGroup.ID, strings.Join(slackIDs, ","))
 				if err != nil {

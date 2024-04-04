@@ -2,8 +2,9 @@ package sync
 
 import (
 	"fmt"
-	"github.com/slack-go/slack"
 	"strings"
+
+	"github.com/slack-go/slack"
 )
 
 type slackClient struct {
@@ -32,9 +33,9 @@ func newSlackClient(token string) (*slackClient, error) {
 	}, nil
 }
 
-func (s *slackClient) createOrGetUserGroup(name string) (*slack.UserGroup, error) {
+func (s *slackClient) createOrGetUserGroup(name string, skipMissing bool) (*slack.UserGroup, error) {
 	group := s.findUserGroupByName(name)
-	if group != nil {
+	if group != nil || skipMissing {
 		return group, nil
 	}
 

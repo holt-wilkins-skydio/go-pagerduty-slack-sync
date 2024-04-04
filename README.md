@@ -58,6 +58,7 @@ Full parameter list:
 | SLACK_TOKEN                  | Token used to talk to Slack API                                                   | n/a            | xoxp-xxxxxx             |
 | SCHEDULE_<NAME>              | A PagerDuty schedule that you want to sync                                        | n/a            | 1234,platform-engineer  |
 | SYNC_ALL_SCHEDULES           | Set to `true` to sync all schedules *See note below                               | false          | true                    |
+| SKIP_MISSING_SLACK_GROUPS    | Set to `true` to skip creating slack groups if they don't exist                   | false          | true                    |
 | RUN_INTERVAL_SECONDS         | Run a sync every X seconds                                                        | 60             | 300                     |
 | PAGERDUTY_SCHEDULE_LOOKAHEAD | How far into the future to evaluate Pagerduty schedules (Go time duration format) | 2400h          | 8760h                   |
 
